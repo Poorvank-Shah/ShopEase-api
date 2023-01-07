@@ -88,17 +88,40 @@ router.get("/income", verifyTokenAndAdmin, async (req, res) => {
             {
                 $project: {
                     month: { $month: "$createdAt" },
+                    year: {$year: "$createdAt"},
                     sales: "$amount", // "$amount"
                 },
             },
             {
                 $group: {
-                    _id: "$month",
+                     _id: ["$year","$month"],
                     total: { $sum: "$sales" },
                 },
             },
         ]);
         res.status(200).json(income);
+    }
+    catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// USER Transaction
+router.get("/transaction", verifyTokenAndAdmin, async (req, res) => {
+
+    // var id = mongoose.Types.ObjectId(`${req.params.id}`);
+    try {
+        const data = await Order.aggregate([
+            {
+                $group:
+                {
+                    // _id : "mongoose.Types.ObjectId($userId)",
+                    _id: "$userId",
+                    total: { $sum: "$amount" },
+                },
+            },
+        ]);
+        res.status(200).json(data);
     }
     catch (err) {
         res.status(500).json(err);
