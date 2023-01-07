@@ -85,7 +85,8 @@ router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
             {
                 $group: 
                 {
-                    id: ["$year", "$month"],
+                    _id: ["$year", "$month"],
+                    // year: "$year",
                     total: { $sum: 1 },
                 },
             },
@@ -96,6 +97,5 @@ router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
         res.status(500).json(err);
     }
 });
-
 
 module.exports = router;
